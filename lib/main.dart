@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_professional/api.dart';
+import 'package:flutter_professional/config.dart';
+import 'package:flutter_professional/widgets/home/word_card.dart';
+import 'package:flutter_professional/bloc/words/words_bloc.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,19 +15,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Flutter App'),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-
 
   final String title;
 
@@ -31,41 +34,35 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+  static const _api = API(config: Config());
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .headline4,
-            ),
-          ],
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+            create: (context) => WordsBloc(api: _api)..add(LoadWords()))
+      ],
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(widget.title),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+        body: Center(
+          child: BlocBuilder<WordsBloc, WordsState>(
+            builder: (context, state) {
+              if (state is WordsInitial) {
+                return const CircularProgressIndicator();
+              } else if (state is WordsUploaded) {
+                return ListView.builder(
+                    itemCount: state.words.length,
+                    itemBuilder: (context, index) {
+                      return WordCard(word: state.words[index]);
+                    });
+              }
+              return const CircularProgressIndicator();
+            },
+          ),
+        ),
       ),
     );
   }

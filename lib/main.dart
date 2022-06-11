@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_professional/api.dart';
 import 'package:flutter_professional/config.dart';
-import 'package:flutter_professional/widgets/home/word_card.dart';
 import 'package:flutter_professional/bloc/words/words_bloc.dart';
+import 'package:flutter_professional/widgets/home/words_widget.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,8 +15,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      key: const Key("MyApp-MaterialApp"),
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primaryColor: Colors.blue,
       ),
       home: const MyHomePage(title: 'Flutter App'),
       debugShowCheckedModeBanner: false,
@@ -47,21 +48,8 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: Text(widget.title),
         ),
-        body: Center(
-          child: BlocBuilder<WordsBloc, WordsState>(
-            builder: (context, state) {
-              if (state is WordsInitial) {
-                return const CircularProgressIndicator();
-              } else if (state is WordsUploaded) {
-                return ListView.builder(
-                    itemCount: state.words.length,
-                    itemBuilder: (context, index) {
-                      return WordCard(word: state.words[index]);
-                    });
-              }
-              return const CircularProgressIndicator();
-            },
-          ),
+        body: const Center(
+          child: Words(),
         ),
       ),
     );

@@ -9,7 +9,7 @@ main() {
     final textFinder = find.byType(Text);
     expect(textFinder, findsOneWidget);
 
-    Text text = tester.widget<Text>(textFinder);
+    Text text = tester.widget(textFinder);
     expect(text.style!.fontSize, 17);
   });
 }

@@ -15,7 +15,7 @@ main() {
     var containerFinder = find.byType(Container);
     expect(containerFinder, findsOneWidget);
 
-    Container container = tester.widget<Container>(containerFinder);
+    Container container = tester.widget(containerFinder);
     expect(container.padding, const EdgeInsets.all(8.0));
     expect(container.margin, const EdgeInsets.all(8.0));
 
